@@ -1,0 +1,32 @@
+#loading {position:fixed;z-index:999;top:0;left:0;width:100%;height:100%;
+      	background:#fff url(../img/material-loader.gif) center no-repeat;background-size: 20%;}
+.login-hp{
+	margin-top:-1pc;
+}
+/*---------- MEDIA 991px ----------*/
+@media (max-width: 991px) {
+  #loading {position:fixed;z-index:999;top:0;left:0;width:100%;height:100%;
+      	background:#fff url(../img/material-loader.gif) center no-repeat;background-size: 50%;}
+    .login-hp{
+     margin-top:2pc;
+    }
+}
+
+
+/*---------- MEDIA 768px ----------*/
+@media  (max-width: 768px) {
+  #loading {position:fixed;z-index:999;top:0;left:0;width:100%;height:100%;
+      	background:#fff url(../img/material-loader.gif) center no-repeat;background-size: 50%;}
+    .login-hp{
+     margin-top:2pc;
+    }
+  }
+}
+/*---------- MEDIA 480px ----------*/
+@media  (max-width: 480px) {
+  #loading {position:fixed;z-index:999;top:0;left:0;width:100%;height:100%;
+      	background:#fff url(../img/material-loader.gif) center no-repeat;background-size: 50%;}
+    .login-hp{
+     margin-top:2pc;
+    }
+}
