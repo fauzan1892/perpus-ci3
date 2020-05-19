@@ -5,6 +5,16 @@
 * Codeigniter 3.1.11
 * Template Admin LTE  Versi 2.4
 
+# Penggunaan Login Akses
+
+Petugas Perpus : 
+User : anang
+Pass : 123
+
+Anggota Perpus :
+User : fauzan
+Pass : 123
+
 # Contributors
 <a href="https://fauzan.codekop.com/"> Fauzan Falah</a>
 
