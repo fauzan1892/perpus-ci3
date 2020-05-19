@@ -7,12 +7,16 @@
 
 # Penggunaan Login Akses
 
-Petugas Perpus : 
+<b>Petugas Perpus : </b>
+<br/>
 User : anang
+<br/>
 Pass : 123
 
-Anggota Perpus :
+<b>Anggota Perpus :</b>
+<br/>
 User : fauzan
+<br/>
 Pass : 123
 
 # Contributors
