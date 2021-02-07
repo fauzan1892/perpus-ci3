@@ -89,7 +89,7 @@
 												echo $diff.' hari';
 												$dd = $this->M_Admin->get_tableid_edit('tbl_biaya_denda','stat','Aktif'); 
 												echo '<p style="color:red;font-size:18px;">
-												'.$this->M_Admin->rp($jml*($dd->harga_denda*$difference->days)).' 
+												'.$this->M_Admin->rp($jml*($dd->harga_denda*$diff)).' 
 												</p><small style="color:#333;">* Untuk '.$jml.' Buku</small>';
 											}else{
 												echo '<p style="color:green;text-align:center;">
