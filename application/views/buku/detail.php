@@ -91,10 +91,10 @@
 						<tr>
 							<td>Lampiran</td>
 							<td><?php if(!empty($buku->lampiran !== "0")){?>
-									<a href="<?= base_url('assets_style/image/buku/'.$buku->sampul);?>" class="btn btn-primary" target="_blank">
-										<i class="fa fa-book"></i> Lampiran
+									<a href="<?= base_url('assets_style/image/buku/'.$buku->lampiran);?>" class="btn btn-primary btn-md" target="_blank">
+										<i class="fa fa-download"></i> Sample Buku
 									</a>
-									<?php  }else{ echo '<br/><p style="color:red">* Tidak ada Lampiran</p>';}?>
+								<?php  }else{ echo '<br/><p style="color:red">* Tidak ada Lampiran</p>';}?>
                                </td>
 						</tr>
 						<tr>
