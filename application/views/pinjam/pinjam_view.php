@@ -30,15 +30,13 @@
                                 <th>No Pinjam</th>
                                 <th>ID Anggota</th>
                                 <th>Nama</th>
-                                <th>Tanggal Pinjam</th>
-                                <th>Tanggal Balik</th>
+                                <th>Pinjam</th>
+                                <th>Balik</th>
                                 <th style="width:10%">Status</th>
-                                <th>Tanggal Kembali</th>
                                 <th>Denda</th>
                                 <th>Aksi</th>
                             </tr>
 						</thead>
-						<?php if($this->session->userdata('level') == 'Petugas'){ ?>
 						<tbody>
 						<?php 
 							$no=1;
@@ -57,20 +55,8 @@
                                 <td><?= $ang->nama;?></td>
                                 <td><?= $isi['tgl_pinjam'];?></td>
                                 <td><?= $isi['tgl_balik'];?></td>
-                                <td><center><?= $isi['status'];?></center></td>
-								<td>
-									<?php 
-										if($isi['tgl_kembali'] == '0')
-										{
-											echo '<p style="color:red;text-align:center;">belum dikembalikan</p>';
-										}else{
-											echo $isi['tgl_kembali'];
-										}
-									
-									?>
-								</td>
+                                <td><?= $isi['status'];?></td>
                                 <td>
-									<center>
 									<?php 
 										if($isi['status'] == 'Di Kembalikan')
 										{
@@ -80,10 +66,6 @@
 											$date1 = date('Ymd');
 											$date2 = preg_replace('/[^0-9]/','',$isi['tgl_balik']);
 											$diff = $date1 - $date2;
-											/*	$datetime1 = new DateTime($date1);
-												$datetime2 = new DateTime($date2);
-												$difference = $datetime1->diff($datetime2); */
-											// echo $difference->days;
 											if($diff > 0 )
 											{
 												echo $diff.' hari';
@@ -92,142 +74,35 @@
 												'.$this->M_Admin->rp($jml*($dd->harga_denda*$diff)).' 
 												</p><small style="color:#333;">* Untuk '.$jml.' Buku</small>';
 											}else{
-												echo '<p style="color:green;text-align:center;">
+												echo '<p style="color:green;">
 												Tidak Ada Denda</p>';
 											}
-												
 										}
 									?>
-									</center>
 								</td>
-									<td <?php if($this->session->userdata('level') == 'Petugas'){ ?>style="width:22%;"<?php }?>>
-									<center>
+								<td style="text-align:center;">
 									<?php if($this->session->userdata('level') == 'Petugas'){ ?>
-									<a href="<?= base_url('transaksi/detailpinjam/'.$isi['pinjam_id']);?>">
-									<button class="btn btn-primary" title="detail pinjam"><i class="fa fa-eye"></i></button></a>
-									
-									<?php 
-										if($isi['tgl_kembali'] == '0')
-										{
-									?>
-										<a href="<?= base_url('transaksi/kembalipinjam/'.$isi['pinjam_id']);?>">
-										<button class="btn btn-warning" title="pengembalian buku">
-											<i class="fa fa-sign-out"></i> Kembalikan</button></a>
-										<?php
-										}else{
-									?>
-										<a href="javascript:void(0)">
-										<button class="btn btn-success" title="pengembalian buku">
-											<i class="fa fa-check"></i> Dikembalikan</button></a>
-									<?php
-										}
-									
-									?>
-									<a href="<?= base_url('transaksi/prosespinjam?pinjam_id='.$isi['pinjam_id']);?>" 
-									 onclick="return confirm('Anda yakin Peminjaman Ini akan dihapus ?');">
-									<button class="btn btn-danger" title="hapus pinjam"><i class="fa fa-trash"></i></button></a>
+										<?php if($isi['tgl_kembali'] == '0') {?>
+											<a href="<?= base_url('transaksi/kembalipinjam/'.$isi['pinjam_id']);?>" class="btn btn-warning btn-sm" title="pengembalian buku">
+												<i class="fa fa-sign-out"></i> Kembalikan</a>
+										<?php }else{ ?>
+											<a href="javascript:void(0)" class="btn btn-success btn-sm" title="pengembalian buku">
+												<i class="fa fa-check"></i> Dikembalikan</a>
+										<?php }?>
+										<a href="<?= base_url('transaksi/detailpinjam/'.$isi['pinjam_id'].'?pinjam=yes');?>" class="btn btn-primary btn-sm" title="detail pinjam"><i class="fa fa-eye"></i></button></a>
+										<a href="<?= base_url('transaksi/prosespinjam?pinjam_id='.$isi['pinjam_id']);?>" 
+											onclick="return confirm('Anda yakin Peminjaman Ini akan dihapus ?');" 
+											class="btn btn-danger btn-sm" title="hapus pinjam">
+											<i class="fa fa-trash"></i></a>
 									<?php }else{?>
-										<a href="<?= base_url('transaksi/detailpinjam/'.$isi['pinjam_id']);?>">
-										<button class="btn btn-primary" title="detail pinjam"><i class="fa fa-eye"></i> Detail Pinjam</button></a>
+										<a href="<?= base_url('transaksi/detailpinjam/'.$isi['pinjam_id']);?>" 
+											class="btn btn-primary btn-sm" title="detail pinjam">
+											<i class="fa fa-eye"></i> Detail Pinjam</a>
 									<?php }?>
-									</center>
                                 </td>
                             </tr>
                         <?php $no++;}?>
 						</tbody>
-					<?php }elseif($this->session->userdata('level') == 'Anggota'){?>
-                        <tbody>
-						<?php $no=1;
-							foreach($pinjam->result_array() as $isi){
-									$anggota_id = $isi['anggota_id'];
-									$ang = $this->db->query("SELECT * FROM tbl_login WHERE anggota_id = '$anggota_id'")->row();
-
-									$pinjam_id = $isi['pinjam_id'];
-									$denda = $this->db->query("SELECT * FROM tbl_denda WHERE pinjam_id = '$pinjam_id'");			
-								
-									if($this->session->userdata('ses_id') == $ang->id_login){
-						?>
-                            <tr>
-                                <td><?= $no;?></td>
-                                <td><?= $isi['pinjam_id'];?></td>
-                                <td><?= $isi['anggota_id'];?></td>
-                                <td><?= $ang->nama;?></td>
-                                <td><?= $isi['tgl_pinjam'];?></td>
-                                <td><?= $isi['tgl_balik'];?></td>
-                                <td><center><?= $isi['status'];?></center></td>
-								<td>
-									<?php 
-										if($isi['tgl_kembali'] == '0')
-										{
-											echo '<p style="color:red;text-align:center;">belum dikembalikan</p>';
-										}else{
-											echo $isi['tgl_kembali'];
-										}
-									
-									?>
-								</td>
-                                <td>
-									<center>
-									<?php 
-
-										$jml = $this->db->query("SELECT * FROM tbl_pinjam WHERE pinjam_id = '$pinjam_id'")->num_rows();			
-										if($denda->num_rows() > 0){
-											$s = $denda->row();
-											echo $this->M_Admin->rp($s->denda);
-										}else{
-											$date1 = date('Ymd');
-											$date2 = preg_replace('/[^0-9]/','',$isi['tgl_balik']);
-											$diff = $date2 - $date1;
-
-											if($diff >= 0 )
-											{
-												echo '<p style="color:green;text-align:center;">
-												Tidak Ada Denda</p>';
-											}else{
-												$dd = $this->M_Admin->get_tableid_edit('tbl_biaya_denda','stat','Aktif'); 
-												echo '<p style="color:red;font-size:18px;">'.$this->M_Admin->rp($jml*($dd->harga_denda*abs($diff))).' 
-												</p><small style="color:#333;">* Untuk '.$jml.' Buku</small>';
-											}
-										}
-									?>
-									</center>
-								</td>
-									<td <?php if($this->session->userdata('level') == 'Petugas'){ ?>style="width:22%;"<?php }?>>
-									<center>
-									<?php if($this->session->userdata('level') == 'Petugas'){ ?>
-									<a href="<?= base_url('transaksi/detailpinjam/'.$isi['pinjam_id']);?>">
-									<button class="btn btn-primary" title="detail pinjam"><i class="fa fa-eye"></i></button></a>
-									
-									<?php 
-										if($isi['tgl_kembali'] == '0')
-										{
-									?>
-										<a href="<?= base_url('transaksi/kembalipinjam/'.$isi['pinjam_id']);?>">
-										<button class="btn btn-warning" title="pengembalian buku">
-											<i class="fa fa-sign-out"></i> Kembalikan</button></a>
-										<?php
-										}else{
-									?>
-										<a href="javascript:void(0)">
-										<button class="btn btn-success" title="pengembalian buku">
-											<i class="fa fa-check"></i> Dikembalikan</button></a>
-									<?php
-										}
-									
-									?>
-									<a href="<?= base_url('transaksi/prosespinjam?pinjam_id='.$isi['pinjam_id']);?>" 
-									 onclick="return confirm('Anda yakin Peminjaman Ini akan dihapus ?');">
-									<button class="btn btn-danger" title="hapus pinjam"><i class="fa fa-trash"></i></button></a>
-									<?php }else{?>
-										<a href="<?= base_url('transaksi/detailpinjam/'.$isi['pinjam_id']);?>">
-										<button class="btn btn-primary" title="detail pinjam"><i class="fa fa-eye"></i> Detail Pinjam</button></a>
-									<?php }?>
-									</center>
-                                </td>
-                            </tr>
-                        <?php $no++;}}?>
-                        </tbody>
-					<?php }?>
 					</table>
 			    </div>
 			    </div>

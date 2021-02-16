@@ -46,6 +46,7 @@ class Login extends CI_Controller {
             $this->session->set_userdata('masuk_sistem_rekam',TRUE);
             $this->session->set_userdata('level',$hasil_login['level']);
             $this->session->set_userdata('ses_id',$hasil_login['id_login']);
+            $this->session->set_userdata('anggota_id',$hasil_login['anggota_id']);
 
             echo '<script>window.location="'.base_url().'dashboard";</script>';
         }else{

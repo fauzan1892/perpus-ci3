@@ -35,15 +35,47 @@ class Transaksi extends CI_Controller {
 	{	
 		$this->data['title_web'] = 'Data Pinjam Buku ';
 		$this->data['idbo'] = $this->session->userdata('ses_id');
-		$this->data['pinjam'] = $this->db->query("SELECT DISTINCT `pinjam_id`, `anggota_id`, 
-		`status`, `tgl_pinjam`, `lama_pinjam`, `tgl_balik`, `tgl_kembali` 
-		FROM tbl_pinjam ORDER BY id_pinjam DESC");
+		
+		if($this->session->userdata('level') == 'Anggota'){
+			$this->data['pinjam'] = $this->db->query("SELECT DISTINCT `pinjam_id`, `anggota_id`, 
+				`status`, `tgl_pinjam`, `lama_pinjam`, `tgl_balik`, `tgl_kembali` 
+				FROM tbl_pinjam WHERE status = 'Dipinjam' 
+				AND anggota_id = ? ORDER BY id_pinjam DESC", 
+				array($this->session->userdata('anggota_id')));
+		}else{
+			$this->data['pinjam'] = $this->db->query("SELECT DISTINCT `pinjam_id`, `anggota_id`, 
+				`status`, `tgl_pinjam`, `lama_pinjam`, `tgl_balik`, `tgl_kembali` 
+				FROM tbl_pinjam WHERE status = 'Dipinjam' ORDER BY id_pinjam DESC");
+		}
 		
 		$this->load->view('header_view',$this->data);
 		$this->load->view('sidebar_view',$this->data);
 		$this->load->view('pinjam/pinjam_view',$this->data);
 		$this->load->view('footer_view',$this->data);
 	}
+
+	public function kembali()
+	{	
+		$this->data['title_web'] = 'Data Pengembalian Buku ';
+		$this->data['idbo'] = $this->session->userdata('ses_id');
+
+		if($this->session->userdata('level') == 'Anggota'){
+			$this->data['pinjam'] = $this->db->query("SELECT DISTINCT `pinjam_id`, `anggota_id`, 
+				`status`, `tgl_pinjam`, `lama_pinjam`, `tgl_balik`, `tgl_kembali` 
+				FROM tbl_pinjam WHERE anggota_id = ? AND status = 'Di Kembalikan' 
+				ORDER BY id_pinjam DESC",array($this->session->userdata('anggota_id')));
+		}else{
+			$this->data['pinjam'] = $this->db->query("SELECT DISTINCT `pinjam_id`, `anggota_id`, 
+				`status`, `tgl_pinjam`, `lama_pinjam`, `tgl_balik`, `tgl_kembali` 
+				FROM tbl_pinjam WHERE status = 'Di Kembalikan' ORDER BY id_pinjam DESC");
+		}
+		
+		$this->load->view('header_view',$this->data);
+		$this->load->view('sidebar_view',$this->data);
+		$this->load->view('kembali/home',$this->data);
+		$this->load->view('footer_view',$this->data);
+	}
+
 
 	public function pinjam()
 	{	
@@ -65,18 +97,37 @@ class Transaksi extends CI_Controller {
 	{
 		$this->data['idbo'] = $this->session->userdata('ses_id');		
 		$id = $this->uri->segment('3');
-		$count = $this->M_Admin->CountTableId('tbl_pinjam','pinjam_id',$id);
-		if($count > 0)
-		{
-			$this->data['pinjam'] = $this->db->query("SELECT DISTINCT `pinjam_id`, 
-			`anggota_id`, `status`, 
-			`tgl_pinjam`, `lama_pinjam`, 
-			`tgl_balik`, `tgl_kembali` 
-			FROM tbl_pinjam WHERE pinjam_id = '$id'")->row();
+		if($this->session->userdata('level') == 'Anggota'){
+			$count = $this->db->get_where('tbl_pinjam',[
+				'pinjam_id' => $id, 
+				'anggota_id' => $this->session->userdata('anggota_id')
+			])->num_rows();
+			if($count > 0)
+			{
+				$this->data['pinjam'] = $this->db->query("SELECT DISTINCT `pinjam_id`, 
+				`anggota_id`, `status`, 
+				`tgl_pinjam`, `lama_pinjam`, 
+				`tgl_balik`, `tgl_kembali` 
+				FROM tbl_pinjam WHERE pinjam_id = ? 
+				AND anggota_id =?", 
+				array($id,$this->session->userdata('anggota_id')))->row();
+			}else{
+				echo '<script>alert("DETAIL TIDAK DITEMUKAN");window.location="'.base_url('transaksi').'"</script>';
+			}
 		}else{
-			echo '<script>alert("DETAIL TIDAK DITEMUKAN");window.location="'.base_url('transaksi').'"</script>';
+			$count = $this->M_Admin->CountTableId('tbl_pinjam','pinjam_id',$id);
+			if($count > 0)
+			{
+				$this->data['pinjam'] = $this->db->query("SELECT DISTINCT `pinjam_id`, 
+				`anggota_id`, `status`, 
+				`tgl_pinjam`, `lama_pinjam`, 
+				`tgl_balik`, `tgl_kembali` 
+				FROM tbl_pinjam WHERE pinjam_id = '$id'")->row();
+			}else{
+				echo '<script>alert("DETAIL TIDAK DITEMUKAN");window.location="'.base_url('transaksi').'"</script>';
+			}
 		}
-
+		$this->data['sidebar'] = 'kembali';
 		$this->data['title_web'] = 'Detail Pinjam Buku ';
 		$this->load->view('header_view',$this->data);
 		$this->load->view('sidebar_view',$this->data);
