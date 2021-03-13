@@ -1,5 +1,11 @@
 ## Deskripsi Aplikasi
- Sistem Informasi Perpustakaan Berbasis Web merupakan sistem yang dapat digunakan untuk mengelola berbagai aktifitas di perpustakaan, mulai dari penyimpanan databuku hingga proses peminjaman.
+Sistem Informasi Perpustakaan Berbasis Web merupakan sistem yang dapat digunakan untuk mengelola berbagai aktifitas di perpustakaan, mulai dari penyimpanan databuku hingga proses peminjaman.
+<br><br>
+Source Blog :  <a href="https://www.codekop.com/read/source-code-sistem-informasi-perpustakaan-dengan-codeigniter-3-61.html" target="_blank">
+https://www.codekop.com/read/source-code-sistem-informasi-perpustakaan-dengan-codeigniter-3-61.html</a>
+<br>
+<br>
+<span style="color:red"><b> * Untuk Reuploader Source Code tolong cantumin sumber juga ya, terima kasih :)</b></span>
 
 ##  Framework
 * Codeigniter 3.1.11
@@ -9,15 +15,15 @@
 
 <b>Petugas Perpus : </b>
 <br/>
-User : anang
+Username : anang
 <br/>
-Pass : 123
+Password : 123
 
 <b>Anggota Perpus :</b>
 <br/>
-User : fauzan
+Username : fauzan
 <br/>
-Pass : 123
+Password : 123
 
 ** Jika ada issues atau revisi atau menambahkan fitur silahkan pull request di repository ini
 
