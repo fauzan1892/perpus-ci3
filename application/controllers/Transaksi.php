@@ -191,8 +191,8 @@ class Transaksi extends CI_Controller {
 				$cart = array_values(unserialize($this->session->userdata('cart')));
 				for ($i = 0; $i < count($cart); $i ++){
 				  unset($cart[$i]);
-				  $this->session->unset_userdata($cart[$i]);
-				  $this->session->unset_userdata('cart');
+				  // $this->session->unset_userdata($cart[$i]);
+				  // $this->session->unset_userdata('cart');
 				}
 			}
 
