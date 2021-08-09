@@ -40,12 +40,12 @@ class Transaksi extends CI_Controller {
 			$this->data['pinjam'] = $this->db->query("SELECT DISTINCT `pinjam_id`, `anggota_id`, 
 				`status`, `tgl_pinjam`, `lama_pinjam`, `tgl_balik`, `tgl_kembali` 
 				FROM tbl_pinjam WHERE status = 'Dipinjam' 
-				AND anggota_id = ? ORDER BY id_pinjam DESC", 
+				AND anggota_id = ? ORDER BY pinjam_id DESC", 
 				array($this->session->userdata('anggota_id')));
 		}else{
 			$this->data['pinjam'] = $this->db->query("SELECT DISTINCT `pinjam_id`, `anggota_id`, 
 				`status`, `tgl_pinjam`, `lama_pinjam`, `tgl_balik`, `tgl_kembali` 
-				FROM tbl_pinjam WHERE status = 'Dipinjam' ORDER BY id_pinjam DESC");
+				FROM tbl_pinjam WHERE status = 'Dipinjam' ORDER BY pinjam_id DESC");
 		}
 		
 		$this->load->view('header_view',$this->data);
