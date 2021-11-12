@@ -5,6 +5,9 @@ Source Blog :  <a href="https://www.codekop.com/read/source-code-sistem-informas
 https://www.codekop.com/read/source-code-sistem-informasi-perpustakaan-dengan-codeigniter-3-61.html</a>
 <br>
 <br>
+Beli versi terbaru nya di link berikut : <a href="https://www.codekop.com/products/source-code-aplikasi-sistem-informasi-perpustakaan-berbasis-website-5.html" target="_blank">https://www.codekop.com/products/source-code-aplikasi-sistem-informasi-perpustakaan-berbasis-website-5.html</a>
+<br>
+<br>
 <span style="color:red"><b> * Untuk Reuploader Source Code tolong cantumin sumber juga ya, terima kasih :)</b></span>
 
 ##  Framework
