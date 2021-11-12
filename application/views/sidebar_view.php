@@ -8,7 +8,7 @@
         <div class="pull-left image">
           <?php
             $d = $this->db->query("SELECT * FROM tbl_login WHERE id_login='$idbo'")->row();
-            if(!empty($d->foto)){
+            if(isset($d->foto)){
           ?>
           <br/>
           <img src="<?php echo base_url();?>assets_style/image/<?php echo $d->foto;?>" alt="#" c

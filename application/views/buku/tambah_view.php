@@ -71,7 +71,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Lampiran Buku <small style="color:green">(pdf) * opsional</small></label>
-                                    <input type="file" accept="" name="lampiran">
+                                    <input type="file" accept="application/pdf" name="lampiran">
                                 </div>
                                 <div class="form-group">
                                     <label>Keterangan Lainnya</label>

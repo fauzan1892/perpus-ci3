@@ -9,7 +9,7 @@ class Transaksi extends CI_Controller {
 		$this->load->helper(array('form', 'url'));
 		$this->load->model('M_Admin');
 		$this->load->library(array('cart'));
-		if($this->session->userdata('masuk_sistem_rekam') != TRUE){
+		if($this->session->userdata('masuk_perpus') != TRUE){
 			$url=base_url('login');
 			redirect($url);
 		}
@@ -298,9 +298,9 @@ class Transaksi extends CI_Controller {
 	{
 		if(!empty($this->input->post('tambah')))
 		{
-			$post= htmlentities($this->input->post());
+			$post= $this->input->post();
 			$data = array(
-				'harga_denda'=>htmlentities($post['harga']),
+				'harga_denda'=>$post['harga'],
 				'stat'=>'Tidak Aktif',
 				'tgl_tetap' => date('Y-m-d')
 			);
@@ -327,7 +327,7 @@ class Transaksi extends CI_Controller {
 
 			$post= $this->input->post();
 			$data = array(
-				'harga_denda'=>htmlentities($post['harga']),
+				'harga_denda'=>$post['harga'],
 				'stat'=>$post['status'],
 				'tgl_tetap' => date('Y-m-d')
 			);
