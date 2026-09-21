@@ -1,0 +1,31 @@
+<form id="form-validation" class="form-bordered" action="#" method="get" autocomplete="off">
+	<fieldset>
+		<div class="form-group">
+			<label>{{youtubeurl}} <span class="text-danger">*</span></label>
+			<input class="form-control" id="youtubeID" name="youtubeID" type="text" required>
+			<div id="preview" style="width:100%; height:auto; margin-top:5px;"></div>
+			<button type="submit" class="btn btn-sm btn-primary pull-right" id="insert-btn"><i class="fa fa-check"></i> {{youtubeInsertV}}</button>
+			<div class="clearfix"></div>
+			<p class="help-block alert alert-info">{{youtubeID}}</p>
+		</div>
+		<div class="form-group">
+			<div class="row">
+				<div class="col-xs-6">
+					<label>{{youtubeWidth}} <span class="text-danger">*</span></label>
+					<input class="form-control" id="youtubeWidth" name="youtubeWidth" type="text" value="640" required>
+				</div>
+				<div class="col-xs-6">
+					<label>{{youtubeHeight}} <span class="text-danger">*</span></label>
+					<input class="form-control" id="youtubeHeight" name="youtubeHeight" type="text" value="385" required>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label>Options</label><br />
+			<label class="radio-inline" style="padding-left:0px; !important;"><input type="checkbox" id="youtubeAutoplay" name="youtubeAutoplay" value="1"> {{youtubeAutoplay}}</label>
+			<label class="radio-inline"><input type="checkbox" id="youtubeREL" name="youtubeREL" value="1"> {{youtubeREL}}</label>
+			<label class="radio-inline"><input type="checkbox" id="youtubeHD" name="youtubeHD" value="1"> {{youtubeHD}}</label>
+			<label class="radio-inline"><input type="checkbox" id="video" name="video" value="1"> {{youtubeHTML5}}</label>
+		</div>
+	</fieldset>
+</form>

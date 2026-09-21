@@ -50,8 +50,8 @@ error_reporting(0);
 <!DOCTYPE html>
 <html>
 	<head>
-		<link rel="stylesheet" href="<?php echo base_url();?>assets_style/assets/bower_components/bootstrap/dist/css/bootstrap.min.css">
-		<link rel="stylesheet" href="<?php echo base_url();?>assets_style/assets/bower_components/font-awesome/css/font-awesome.min.css">
+		<link rel="stylesheet" href="<?php echo base_url();?>assets/adminlte/bower_components/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="<?php echo base_url();?>assets/adminlte/bower_components/font-awesome/css/font-awesome.min.css">
 		<title><?= $title_web;?></title>
 		<style>
 			body {
@@ -129,7 +129,7 @@ error_reporting(0);
 							</div>
 							<div class="col-sm-4 text-center">
 								<center>
-									<img src="<?php echo base_url();?>assets_style/image/<?php echo $user->foto;?>" style="width:3cm;height:4cm;" class="img-responsive">
+									<img src="<?php echo perpus_user_foto_url($user->foto);?>" alt="Foto <?= html_escape($user->nama);?>" style="width:3cm;height:4cm;object-fit:cover;" class="img-responsive">
 								</center>
 							</div>
 						</div>

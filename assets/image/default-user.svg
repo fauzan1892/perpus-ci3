@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-labelledby="title desc">
+  <title id="title">Foto user default</title>
+  <desc id="desc">Ilustrasi user untuk data yang belum memiliki foto</desc>
+  <rect width="240" height="240" rx="120" fill="#eaf2f8"/>
+  <circle cx="120" cy="86" r="42" fill="#56ccf2"/>
+  <path d="M48 204c4-48 32-72 72-72s68 24 72 72" fill="#2f80ed"/>
+  <circle cx="104" cy="82" r="6" fill="#34495e"/>
+  <circle cx="136" cy="82" r="6" fill="#34495e"/>
+  <path d="M98 106c14 12 30 12 44 0" fill="none" stroke="#34495e" stroke-width="6" stroke-linecap="round"/>
+</svg>

@@ -33,14 +33,27 @@ class Login extends CI_Controller {
 
     public function auth()
     {
-        $user = htmlspecialchars($this->input->post('user',TRUE),ENT_QUOTES);
-        $pass = htmlspecialchars($this->input->post('pass',TRUE),ENT_QUOTES);
-        // auth
-        $proses_login = $this->db->query("SELECT * FROM tbl_login WHERE user='$user' AND pass = md5('$pass')");
-        $row = $proses_login->num_rows();
-        if($row > 0)
+        $user = trim((string) $this->input->post('user', TRUE));
+        $pass = (string) $this->input->post('pass', FALSE);
+
+        // Fetch by username using Query Builder so input is safely bound.
+        $hasil_login = $this->db
+            ->where('user', $user)
+            ->where('deleted_at IS NULL', NULL, FALSE)
+            ->limit(1)
+            ->get('tbl_login')
+            ->row_array();
+
+        $is_valid = FALSE;
+        if (!empty($hasil_login))
         {
-            $hasil_login = $proses_login->row_array();
+            $stored_password = (string) $hasil_login['pass'];
+            $is_valid = password_verify($pass, $stored_password);
+        }
+
+        if ($is_valid)
+        {
+            $this->session->sess_regenerate(TRUE);
 
             // create session
             $this->session->set_userdata('masuk_perpus',TRUE);
@@ -48,17 +61,16 @@ class Login extends CI_Controller {
             $this->session->set_userdata('ses_id',$hasil_login['id_login']);
             $this->session->set_userdata('anggota_id',$hasil_login['anggota_id']);
 
-            echo '<script>window.location="'.base_url().'dashboard";</script>';
+            redirect('dashboard');
         }else{
-
-            echo '<script>alert("Login Gagal, Periksa Kembali Username dan Password Anda");
-            window.location="'.base_url().'"</script>';
+            $this->session->set_flashdata('login_error', 'Username atau password salah.');
+            redirect('login');
         }
     }
 
     public function logout()
     {
         $this->session->sess_destroy();
-        echo '<script>window.location="'.base_url().'";</script>';
+        redirect('login');
     }
 }

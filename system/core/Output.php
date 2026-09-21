@@ -434,6 +434,13 @@ class CI_Output {
 			$output =& $this->final_output;
 		}
 
+		// PHP 8.2 deprecates passing NULL to string functions. Some legacy
+		// controllers can leave final_output unset, so normalize it first.
+		if ($output === NULL)
+		{
+			$output = '';
+		}
+
 		// --------------------------------------------------------------------
 
 		// Do we need to write a cache file? Only if the controller does not have its

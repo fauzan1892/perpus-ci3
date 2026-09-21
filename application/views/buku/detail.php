@@ -32,11 +32,10 @@
 						</tr>
 						<tr>
 							<td>Sampul Buku</td>
-							<td><?php if(!empty($buku->sampul !== "0")){?>
-									<a href="<?= base_url('assets_style/image/buku/'.$buku->sampul);?>" target="_blank">
-										<img src="<?= base_url('assets_style/image/buku/'.$buku->sampul);?>" style="width:170px;height:170px;" class="img-responsive">
+			<td>
+									<a href="<?= perpus_buku_sampul_url($buku->sampul);?>" target="_blank">
+									<img src="<?= perpus_buku_sampul_url($buku->sampul);?>" alt="Sampul <?= html_escape($buku->title);?>" style="width:170px;height:170px;object-fit:cover;" class="img-responsive">
 									</a>
-									<?php }else{ echo '<br/><p style="color:red">* Tidak ada Sampul</p>';}?>
 								</td>
 						</tr>
 						<tr>
@@ -68,7 +67,7 @@
 							<td>
 								<?php
 									$id = $buku->buku_id;
-									$dd = $this->db->query("SELECT * FROM tbl_pinjam WHERE buku_id= '$id' AND status = 'Dipinjam'");
+									$dd = $this->db->where('buku_id', $id)->where('status', 'Dipinjam')->where('deleted_at IS NULL', NULL, FALSE)->get('tbl_pinjam');
 									if($dd->num_rows() > 0 )
 									{
 										echo $dd->num_rows();
@@ -91,7 +90,7 @@
 						<tr>
 							<td>Lampiran</td>
 							<td><?php if(!empty($buku->lampiran !== "0")){?>
-									<a href="<?= base_url('assets_style/image/buku/'.$buku->lampiran);?>" class="btn btn-primary btn-md" target="_blank">
+									<a href="<?= base_url('assets/image/buku/'.$buku->lampiran);?>" class="btn btn-primary btn-md" target="_blank">
 										<i class="fa fa-download"></i> Sample Buku
 									</a>
 								<?php  }else{ echo '<br/><p style="color:red">* Tidak ada Lampiran</p>';}?>
@@ -135,7 +134,7 @@
 	<?php 
 	$no = 1;
 	$bukuid = $buku->buku_id;
-	$pin = $this->db->query("SELECT * FROM tbl_pinjam WHERE buku_id ='$bukuid' AND status = 'Dipinjam'")->result_array();
+	$pin = $this->db->where('buku_id', $bukuid)->where('status', 'Dipinjam')->where('deleted_at IS NULL', NULL, FALSE)->get('tbl_pinjam')->result_array();
 	foreach($pin as $si)
 	{
 		$isi = $this->M_Admin->get_tableid_edit('tbl_login','anggota_id',$si['anggota_id']);

@@ -43,15 +43,7 @@
                                 <td><?= $no;?></td>
                                 <td><?= $isi['anggota_id'];?></td>
                                 <td>
-                                    <center>
-                                        <?php if(!empty($isi['foto'] !== "-")){?>
-                                        <img src="<?php echo base_url();?>assets_style/image/<?php echo $isi['foto'];?>" alt="#" 
-                                        class="img-responsive" style="height:auto;width:100px;"/>
-                                        <?php }else{?>
-                                            <!--<img src="" alt="#" class="user-image" style="border:2px solid #fff;"/>-->
-                                            <i class="fa fa-user fa-3x" style="color:#333;"></i>
-                                        <?php }?>
-                                    </center>
+									<img src="<?php echo perpus_user_foto_url($isi['foto']);?>" alt="Foto <?= html_escape($isi['nama']);?>" class="img-responsive" style="width:40px;"/>
                                 </td>
                                 <td><?= $isi['nama'];?></td>
                                 <td><?= $isi['user'];?></td>

@@ -103,6 +103,7 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	 * @param	string	$name		Session cookie name, unused
 	 * @return	bool
 	 */
+	#[\ReturnTypeWillChange]
 	public function open($save_path, $name)
 	{
 		$this->_memcached = new Memcached();
@@ -160,6 +161,7 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	 * @param	string	$session_id	Session ID
 	 * @return	string	Serialized session data
 	 */
+	#[\ReturnTypeWillChange]
 	public function read($session_id)
 	{
 		if (isset($this->_memcached) && $this->_get_lock($session_id))
@@ -186,6 +188,7 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	 * @param	string	$session_data	Serialized session data
 	 * @return	bool
 	 */
+	#[\ReturnTypeWillChange]
 	public function write($session_id, $session_data)
 	{
 		if ( ! isset($this->_memcached, $this->_lock_key))
@@ -237,6 +240,7 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	 *
 	 * @return	bool
 	 */
+	#[\ReturnTypeWillChange]
 	public function close()
 	{
 		if (isset($this->_memcached))
@@ -264,6 +268,7 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	 * @param	string	$session_id	Session ID
 	 * @return	bool
 	 */
+	#[\ReturnTypeWillChange]
 	public function destroy($session_id)
 	{
 		if (isset($this->_memcached, $this->_lock_key))
@@ -286,6 +291,7 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 	 * @param	int 	$maxlifetime	Maximum lifetime of sessions
 	 * @return	bool
 	 */
+	#[\ReturnTypeWillChange]
 	public function gc($maxlifetime)
 	{
 		// Not necessary, Memcached takes care of that.

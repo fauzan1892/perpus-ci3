@@ -20,6 +20,7 @@
 			    <!-- /.box-header -->
 			    <div class="box-body">
                     <form action="<?php echo base_url('user/upd');?>" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
@@ -75,7 +76,7 @@
                                     <input type="file" accept="image/*" name="gambar">
                                     
                                     <br/>
-                                    <img src="<?= base_url('assets_style/image/'.$user->foto);?>" class="img-responsive" alt="#">
+                                    <img src="<?= perpus_user_foto_url($user->foto);?>" class="img-responsive" style="width:80px;" alt="Foto <?= html_escape($user->nama);?>">
                                 </div>
                                 <div class="form-group">
                                     <label>Alamat</label>

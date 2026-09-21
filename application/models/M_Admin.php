@@ -2,20 +2,40 @@
 
 class M_Admin extends CI_Model
 {
+  protected $soft_delete_tables = array(
+    'tbl_biaya_denda',
+    'tbl_buku',
+    'tbl_denda',
+    'tbl_kategori',
+    'tbl_login',
+    'tbl_pinjam',
+    'tbl_rak',
+  );
+
   function __construct()
   {
 	 parent::__construct();
 	 //validasi jika user belum login
 	 }
 
+   private function apply_active_filter($table_name)
+   {
+     if (in_array($table_name, $this->soft_delete_tables, TRUE))
+     {
+       $this->db->where('deleted_at IS NULL', NULL, FALSE);
+     }
+   }
+
    function get_table($table_name)
    {
+     $this->apply_active_filter($table_name);
      $get_user = $this->db->get($table_name);
      return $get_user->result_array();
    }
 
    function get_tableid($table_name,$where,$id)
    {
+     $this->apply_active_filter($table_name);
      $this->db->where($where,$id);
      $edit = $this->db->get($table_name);
      return $edit->result_array();
@@ -23,6 +43,7 @@ class M_Admin extends CI_Model
 
    function get_tableid_edit($table_name,$where,$id)
    {
+     $this->apply_active_filter($table_name);
      $this->db->where($where,$id);
      $edit = $this->db->get($table_name);
      return $edit->row();
@@ -53,6 +74,7 @@ class M_Admin extends CI_Model
 
    function update_table($table_name,$where,$id,$data)
    {
+     $this->apply_active_filter($table_name);
      $this->db->where($where,$id);
      $update = $this->db->update($table_name,$data);
      return $update;
@@ -61,7 +83,15 @@ class M_Admin extends CI_Model
    function delete_table($table_name,$where,$id)
    {
      $this->db->where($where,$id);
-     $hapus = $this->db->delete($table_name);
+     if (in_array($table_name, $this->soft_delete_tables, TRUE))
+     {
+       $this->db->set('deleted_at', 'CURRENT_TIMESTAMP', FALSE);
+       $hapus = $this->db->update($table_name);
+     }
+     else
+     {
+       $hapus = $this->db->delete($table_name);
+     }
      return $hapus;
    }
 
@@ -69,13 +99,22 @@ class M_Admin extends CI_Model
    {
       if (!empty($id)) {
          $this->db->where_in($where,$id);
-         $hapus = $this->db->delete($table_name);
+         if (in_array($table_name, $this->soft_delete_tables, TRUE))
+         {
+           $this->db->set('deleted_at', 'CURRENT_TIMESTAMP', FALSE);
+           $hapus = $this->db->update($table_name);
+         }
+         else
+         {
+           $hapus = $this->db->delete($table_name);
+         }
          return $hapus;
       }
    }
 
    function edit_table($table_name,$where,$id)
    {
+     $this->apply_active_filter($table_name);
      $this->db->where($where,$id);
      $edit = $this->db->get($table_name);
      return $edit->row();
@@ -83,12 +122,14 @@ class M_Admin extends CI_Model
 
    function CountTable($table_name)
    {
+     $this->apply_active_filter($table_name);
      $Count = $this->db->get($table_name);
      return $Count->num_rows();
    }
 
    function CountTableId($table_name,$where,$id)
    {
+     $this->apply_active_filter($table_name);
      $this->db->where($where,$id);
      $Count = $this->db->get($table_name);
      return $Count->num_rows();
@@ -97,6 +138,7 @@ class M_Admin extends CI_Model
    function SelectTable($table_name,$query,$id,$orderby)
    {
        $this->db->select($query, FALSE); // select('RIGHT(user.id_odojers,4) as kode', FALSE);
+       $this->apply_active_filter($table_name);
        $this->db->order_by($id,$orderby);
        $query = $this->db->get($table_name); // cek dulu apakah ada sudah ada kode di tabel.
        return $query;
@@ -110,6 +152,7 @@ class M_Admin extends CI_Model
 
   function get_user($user)
   {
+    $this->apply_active_filter('tbl_login');
     $this->db->where('id_login',$user);
     $get_user = $this->db->get('tbl_login');
     return $get_user->row();
@@ -121,9 +164,10 @@ class M_Admin extends CI_Model
 	}
 
  
-	public function buat_kode($table_name,$kodeawal,$idkode,$orderbylimit)
+  public function buat_kode($table_name,$kodeawal,$idkode,$orderbylimit)
   {
-      $query = $this->db->query("select * from $table_name $orderbylimit"); // cek dulu apakah ada sudah ada kode di tabel.
+      $this->apply_active_filter($table_name);
+      $query = $this->db->order_by($idkode, 'DESC')->limit(1)->get($table_name); // Abaikan data soft delete saat membuat kode baru.
       
 		  if($query->num_rows() > 0){
         //jika kode ternyata sudah ada.

@@ -6,7 +6,7 @@ class Transaksi extends CI_Controller {
 	 parent::__construct();
 	 	//validasi jika user belum login
 		$this->data['CI'] =& get_instance();
-		$this->load->helper(array('form', 'url'));
+		$this->load->helper(array('form', 'url', 'perpus'));
 		$this->load->model('M_Admin');
 		$this->load->library(array('cart'));
 		if($this->session->userdata('masuk_perpus') != TRUE){
@@ -39,13 +39,13 @@ class Transaksi extends CI_Controller {
 		if($this->session->userdata('level') == 'Anggota'){
 			$this->data['pinjam'] = $this->db->query("SELECT DISTINCT `pinjam_id`, `anggota_id`, 
 				`status`, `tgl_pinjam`, `lama_pinjam`, `tgl_balik`, `tgl_kembali` 
-				FROM tbl_pinjam WHERE status = 'Dipinjam' 
+				FROM tbl_pinjam WHERE deleted_at IS NULL AND status = 'Dipinjam'
 				AND anggota_id = ? ORDER BY pinjam_id DESC", 
 				array($this->session->userdata('anggota_id')));
 		}else{
 			$this->data['pinjam'] = $this->db->query("SELECT DISTINCT `pinjam_id`, `anggota_id`, 
 				`status`, `tgl_pinjam`, `lama_pinjam`, `tgl_balik`, `tgl_kembali` 
-				FROM tbl_pinjam WHERE status = 'Dipinjam' ORDER BY pinjam_id DESC");
+				FROM tbl_pinjam WHERE deleted_at IS NULL AND status = 'Dipinjam' ORDER BY pinjam_id DESC");
 		}
 		
 		$this->load->view('header_view',$this->data);
@@ -62,12 +62,12 @@ class Transaksi extends CI_Controller {
 		if($this->session->userdata('level') == 'Anggota'){
 			$this->data['pinjam'] = $this->db->query("SELECT DISTINCT `pinjam_id`, `anggota_id`, 
 				`status`, `tgl_pinjam`, `lama_pinjam`, `tgl_balik`, `tgl_kembali` 
-				FROM tbl_pinjam WHERE anggota_id = ? AND status = 'Di Kembalikan' 
+				FROM tbl_pinjam WHERE deleted_at IS NULL AND anggota_id = ? AND status = 'Di Kembalikan'
 				ORDER BY id_pinjam DESC",array($this->session->userdata('anggota_id')));
 		}else{
 			$this->data['pinjam'] = $this->db->query("SELECT DISTINCT `pinjam_id`, `anggota_id`, 
 				`status`, `tgl_pinjam`, `lama_pinjam`, `tgl_balik`, `tgl_kembali` 
-				FROM tbl_pinjam WHERE status = 'Di Kembalikan' ORDER BY id_pinjam DESC");
+				FROM tbl_pinjam WHERE deleted_at IS NULL AND status = 'Di Kembalikan' ORDER BY id_pinjam DESC");
 		}
 		
 		$this->load->view('header_view',$this->data);
@@ -83,7 +83,7 @@ class Transaksi extends CI_Controller {
 		$this->data['nop'] = $this->M_Admin->buat_kode('tbl_pinjam','PJ','id_pinjam','ORDER BY id_pinjam DESC LIMIT 1'); 
 		$this->data['idbo'] = $this->session->userdata('ses_id');
         $this->data['user'] = $this->M_Admin->get_table('tbl_login');
-		$this->data['buku'] =  $this->db->query("SELECT * FROM tbl_buku ORDER BY id_buku DESC");
+		$this->data['buku'] = $this->db->where('deleted_at IS NULL', NULL, FALSE)->order_by('id_buku', 'DESC')->get('tbl_buku');
 
 		$this->data['title_web'] = 'Tambah Pinjam Buku ';
 
@@ -98,7 +98,7 @@ class Transaksi extends CI_Controller {
 		$this->data['idbo'] = $this->session->userdata('ses_id');		
 		$id = $this->uri->segment('3');
 		if($this->session->userdata('level') == 'Anggota'){
-			$count = $this->db->get_where('tbl_pinjam',[
+			$count = $this->db->where('deleted_at IS NULL', NULL, FALSE)->get_where('tbl_pinjam',[
 				'pinjam_id' => $id, 
 				'anggota_id' => $this->session->userdata('anggota_id')
 			])->num_rows();
@@ -108,7 +108,7 @@ class Transaksi extends CI_Controller {
 				`anggota_id`, `status`, 
 				`tgl_pinjam`, `lama_pinjam`, 
 				`tgl_balik`, `tgl_kembali` 
-				FROM tbl_pinjam WHERE pinjam_id = ? 
+				FROM tbl_pinjam WHERE deleted_at IS NULL AND pinjam_id = ?
 				AND anggota_id =?", 
 				array($id,$this->session->userdata('anggota_id')))->row();
 			}else{
@@ -122,7 +122,7 @@ class Transaksi extends CI_Controller {
 				`anggota_id`, `status`, 
 				`tgl_pinjam`, `lama_pinjam`, 
 				`tgl_balik`, `tgl_kembali` 
-				FROM tbl_pinjam WHERE pinjam_id = '$id'")->row();
+				FROM tbl_pinjam WHERE deleted_at IS NULL AND pinjam_id = ?", array($id))->row();
 			}else{
 				echo '<script>alert("DETAIL TIDAK DITEMUKAN");window.location="'.base_url('transaksi').'"</script>';
 			}
@@ -146,7 +146,7 @@ class Transaksi extends CI_Controller {
 			`anggota_id`, `status`, 
 			`tgl_pinjam`, `lama_pinjam`, 
 			`tgl_balik`, `tgl_kembali` 
-			FROM tbl_pinjam WHERE pinjam_id = '$id'")->row();
+			FROM tbl_pinjam WHERE deleted_at IS NULL AND pinjam_id = ?", array($id))->row();
 		}else{
 			echo '<script>alert("DETAIL TIDAK DITEMUKAN");window.location="'.base_url('transaksi').'"</script>';
 		}
@@ -166,8 +166,14 @@ class Transaksi extends CI_Controller {
 		if(!empty($post['tambah']))
 		{
 
-			$tgl = $post['tgl'];
-			$tgl2 = date('Y-m-d', strtotime('+'.$post['lama'].' days', strtotime($tgl)));
+			$tgl = trim((string) ($post['tgl'] ?? ''));
+			$lama_pinjam = filter_var($post['lama'] ?? null, FILTER_VALIDATE_INT);
+			$tgl2 = perpus_tanggal_jatuh_tempo($tgl, $lama_pinjam);
+			if ($tgl2 === false)
+			{
+				$this->session->set_flashdata('pesan','<div id="notifikasi"><div class="alert alert-danger"><p>Tanggal dan lama pinjam tidak valid.</p></div></div>');
+				redirect(base_url('transaksi/pinjam'));
+			}
 
 			$hasil_cart = array_values(unserialize($this->session->userdata('cart')));
 			foreach($hasil_cart as $isi)
@@ -178,7 +184,7 @@ class Transaksi extends CI_Controller {
 					'buku_id' => $isi['id'], 
 					'status' => 'Dipinjam', 
 					'tgl_pinjam' => htmlentities($post['tgl']), 
-					'lama_pinjam' => htmlentities($post['lama']), 
+					'lama_pinjam' => $lama_pinjam,
 					'tgl_balik'  => $tgl2, 
 					'tgl_kembali'  => '0',
 				);
@@ -215,52 +221,47 @@ class Transaksi extends CI_Controller {
 
 		if($this->input->get('kembali'))
 		{
-			$id = $this->input->get('kembali');
-			$pinjam = $this->db->query("SELECT  * FROM tbl_pinjam WHERE pinjam_id = '$id'");
-
-			foreach($pinjam->result_array() as $isi){
-				$pinjam_id = $isi['pinjam_id'];
-				$denda = $this->db->query("SELECT * FROM tbl_denda WHERE pinjam_id = '$pinjam_id'");
-				$jml = $this->db->query("SELECT * FROM tbl_pinjam WHERE pinjam_id = '$pinjam_id'")->num_rows();			
-				if($denda->num_rows() > 0){
-					$s = $denda->row();
-					echo $s->denda;
-				}else{
-					$date1 = date('Ymd');
-					$date2 = preg_replace('/[^0-9]/','',$isi['tgl_balik']);
-					$diff = $date2 - $date1;
-					if($diff >= 0 )
-					{
-						$harga_denda = 0;
-						$lama_waktu = 0;
-					}else{
-						$dd = $this->M_Admin->get_tableid_edit('tbl_biaya_denda','stat','Aktif'); 
-						$harga_denda = $jml*($dd->harga_denda*abs($diff));
-						$lama_waktu = abs($diff);
-					}
-				}
-				
+			$id = trim((string) $this->input->get('kembali', TRUE));
+			$pinjam = $this->db->where('pinjam_id', $id)->where('deleted_at IS NULL', NULL, FALSE)->get('tbl_pinjam')->result_array();
+			if (empty($pinjam))
+			{
+				$this->session->set_flashdata('pesan','<div id="notifikasi"><div class="alert alert-danger"><p>Transaksi peminjaman tidak ditemukan.</p></div></div>');
+				redirect(base_url('transaksi'));
 			}
+
+			if ((string) $pinjam[0]['tgl_kembali'] !== '0' || $pinjam[0]['status'] === 'Di Kembalikan')
+			{
+				$this->session->set_flashdata('pesan','<div id="notifikasi"><div class="alert alert-warning"><p>Transaksi ini sudah dikembalikan.</p></div></div>');
+				redirect(base_url('transaksi'));
+			}
+
+			$jumlah_buku = count($pinjam);
+			$lama_waktu = perpus_hari_terlambat($pinjam[0]['tgl_balik']);
+			$dd = $this->db->where('stat', 'Aktif')->where('deleted_at IS NULL', NULL, FALSE)->order_by('id_biaya_denda', 'DESC')->limit(1)->get('tbl_biaya_denda')->row();
+			$harga_denda = perpus_hitung_denda($lama_waktu, $jumlah_buku, $dd ? $dd->harga_denda : 0);
+			$tanggal_kembali = date('Y-m-d');
 
 			$data = array(
 				'status' => 'Di Kembalikan', 
-				'tgl_kembali'  => date('Y-m-d'),
+				'tgl_kembali'  => $tanggal_kembali,
 			);
-
-			$total_array = count($data);
-			if($total_array != 0)
-			{	
-				$this->db->where('pinjam_id',$this->input->get('kembali'));
-				$this->db->update('tbl_pinjam',$data);
-			}
+			$this->db->where('pinjam_id', $id)->where('status', 'Dipinjam')->where('deleted_at IS NULL', NULL, FALSE)->update('tbl_pinjam', $data);
 
 			$data_denda = array(
-				'pinjam_id' => $this->input->get('kembali'), 
+				'pinjam_id' => $id,
 				'denda' => $harga_denda, 
 				'lama_waktu'=>$lama_waktu, 
-				'tgl_denda'=> date('Y-m-d'),
+				'tgl_denda'=> $tanggal_kembali,
 			);
-			$this->db->insert('tbl_denda',$data_denda);
+			$existing_denda = $this->db->where('pinjam_id', $id)->where('deleted_at IS NULL', NULL, FALSE)->order_by('id_denda', 'ASC')->limit(1)->get('tbl_denda')->row();
+			if ($existing_denda)
+			{
+				$this->db->where('id_denda', $existing_denda->id_denda)->where('deleted_at IS NULL', NULL, FALSE)->update('tbl_denda', $data_denda);
+			}
+			else
+			{
+				$this->db->insert('tbl_denda', $data_denda);
+			}
 
 			$this->session->set_flashdata('pesan','<div id="notifikasi"><div class="alert alert-success">
 			<p> Pengembalian Pinjam Buku Sukses !</p>
@@ -274,14 +275,14 @@ class Transaksi extends CI_Controller {
 	{
 		$this->data['idbo'] = $this->session->userdata('ses_id');	
 
-		$this->data['denda'] =  $this->db->query("SELECT * FROM tbl_biaya_denda ORDER BY id_biaya_denda DESC");
+		$this->data['denda'] = $this->db->where('deleted_at IS NULL', NULL, FALSE)->order_by('id_biaya_denda', 'DESC')->get('tbl_biaya_denda');
 
 		if(!empty($this->input->get('id'))){
 			$id = $this->input->get('id');
 			$count = $this->M_Admin->CountTableId('tbl_biaya_denda','id_biaya_denda',$id);
 			if($count > 0)
 			{			
-				$this->data['den'] = $this->db->query("SELECT *FROM tbl_biaya_denda WHERE id_biaya_denda='$id'")->row();
+				$this->data['den'] = $this->db->where('id_biaya_denda', $id)->where('deleted_at IS NULL', NULL, FALSE)->get('tbl_biaya_denda')->row();
 			}else{
 				echo '<script>alert("KATEGORI TIDAK DITEMUKAN");window.location="'.base_url('transaksi/denda').'"</script>';
 			}
@@ -321,7 +322,7 @@ class Transaksi extends CI_Controller {
 				$data1 = array(
 					'stat'=>'Tidak Aktif',
 				);
-				$this->db->where('id_biaya_denda',$isi['id_biaya_denda']);
+				$this->db->where('id_biaya_denda',$isi['id_biaya_denda'])->where('deleted_at IS NULL', NULL, FALSE);
 				$this->db->update('tbl_biaya_denda', $data1);
 			}
 
@@ -332,7 +333,7 @@ class Transaksi extends CI_Controller {
 				'tgl_tetap' => date('Y-m-d')
 			);
 
-			$this->db->where('id_biaya_denda',$post['edit']);
+			$this->db->where('id_biaya_denda',$post['edit'])->where('deleted_at IS NULL', NULL, FALSE);
 			$this->db->update('tbl_biaya_denda', $data);
 
 
@@ -344,8 +345,7 @@ class Transaksi extends CI_Controller {
 
 		if(!empty($this->input->get('denda_id')))
 		{
-			$this->db->where('id_biaya_denda',$this->input->get('denda_id'));
-			$this->db->delete('tbl_biaya_denda');
+			$this->M_Admin->delete_table('tbl_biaya_denda', 'id_biaya_denda', $this->input->get('denda_id'));
 
 			$this->session->set_flashdata('pesan','<div id="notifikasi"><div class="alert alert-warning">
 			<p> Hapus Harga Denda Sukses !</p>
@@ -397,8 +397,12 @@ class Transaksi extends CI_Controller {
 
 	public function buku()
     {	
-		$id = $this->input->post('kode_buku');
-		$row = $this->db->query("SELECT * FROM tbl_buku WHERE buku_id ='$id'");
+		$id = trim((string) $this->input->post('kode_buku', TRUE));
+		if ($id === '')
+		{
+			return;
+		}
+		$row = $this->db->where('buku_id', $id)->where('deleted_at IS NULL', NULL, FALSE)->get('tbl_buku');
 		
 		if($row->num_rows() > 0)
 		{
@@ -410,19 +414,11 @@ class Transaksi extends CI_Controller {
 				'name'    => $tes->title,
 				'options' => array('isbn' => $tes->isbn,'thn' => $tes->thn_buku,'penerbit' => $tes->penerbit)
 			);
-			if(!$this->session->has_userdata('cart')) {
-				$cart = array($item);
+			$cart = $this->cart_items();
+			if ($this->exists($id, $cart) === -1)
+			{
+				$cart[] = $item;
 				$this->session->set_userdata('cart', serialize($cart));
-			} else {
-				$index = $this->exists($id);
-				$cart = array_values(unserialize($this->session->userdata('cart')));
-				if($index == -1) {
-					array_push($cart, $item);
-					$this->session->set_userdata('cart', serialize($cart));
-				} else {
-					$cart[$index]['quantity']++;
-					$this->session->set_userdata('cart', serialize($cart));
-				}
 			}
 		}else{
 
@@ -432,6 +428,7 @@ class Transaksi extends CI_Controller {
 
 	public function buku_list()
 	{
+		$cart = $this->cart_items();
 	?>
 		<table class="table table-striped">
 			<thead>
@@ -445,7 +442,7 @@ class Transaksi extends CI_Controller {
 			</thead>
 			<tbody>
 			<?php $no=1;
-				foreach(array_values(unserialize($this->session->userdata('cart'))) as $items){?>
+				foreach($cart as $items){?>
 				<tr>
 					<td><?= $no;?></td>
 					<td><?= $items['name'];?></td>
@@ -462,7 +459,7 @@ class Transaksi extends CI_Controller {
 							$.ajax({
 								type: "POST",
 								url: "<?php echo base_url('transaksi/del_cart');?>",
-								data:'kode_buku='+$(this).attr("data_<?=$no;?>"),
+								data:'buku_id='+$(this).attr("data_<?=$no;?>"),
 								beforeSend: function(){
 								},
 								success: function(html){
@@ -475,7 +472,7 @@ class Transaksi extends CI_Controller {
 			<?php $no++;}?>
 			</tbody>
 		</table>
-		<?php foreach(array_values(unserialize($this->session->userdata('cart'))) as $items){?>
+		<?php foreach($cart as $items){?>
 			<input type="hidden" value="<?= $items['id'];?>" name="idbuku[]">
 		<?php }?>
 		<div id="tampil"></div>
@@ -484,21 +481,44 @@ class Transaksi extends CI_Controller {
 
 	public function del_cart()
     {
-		error_reporting(0);
-        $id = $this->input->post('buku_id');
-        $index = $this->exists($id);
-        $cart = array_values(unserialize($this->session->userdata('cart')));
-        unset($cart[$index]);
-        $this->session->set_userdata('cart', serialize($cart));
-       // redirect('jual/tambah');
+		$id = trim((string) $this->input->post('buku_id', TRUE));
+		$cart = $this->cart_items();
+		$index = $this->exists($id, $cart);
+
+		if ($index !== -1)
+		{
+			unset($cart[$index]);
+			$cart = array_values($cart);
+		}
+
+		if (empty($cart))
+		{
+			$this->session->unset_userdata('cart');
+		}
+		else
+		{
+			$this->session->set_userdata('cart', serialize($cart));
+		}
 		echo '<script>$("#result_buku").load("'.base_url('transaksi/buku_list').'");</script>';
     }
 
-    private function exists($id)
+    private function cart_items()
     {
-        $cart = array_values(unserialize($this->session->userdata('cart')));
+        $stored_cart = $this->session->userdata('cart');
+        if (!is_string($stored_cart))
+        {
+            return array();
+        }
+
+        $cart = unserialize($stored_cart, array('allowed_classes' => FALSE));
+        return is_array($cart) ? array_values($cart) : array();
+    }
+
+    private function exists($id, $cart = NULL)
+    {
+        $cart = $cart === NULL ? $this->cart_items() : $cart;
         for ($i = 0; $i < count($cart); $i ++) {
-            if ($cart[$i]['buku_id'] == $id) {
+            if (isset($cart[$i]['id']) && (string) $cart[$i]['id'] === (string) $id) {
                 return $i;
             }
         }

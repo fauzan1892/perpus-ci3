@@ -9,12 +9,37 @@
 </footer>
 
 <div id="logout"></div>
+<style>
+    #notifikasi {
+        margin-bottom: 15px;
+    }
+
+    #notifikasi .alert {
+        position: relative;
+        margin: 0;
+        padding: 13px 38px 13px 16px;
+        border: 0;
+        border-left: 4px solid rgba(0, 0, 0, .18);
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+    }
+
+    #notifikasi .alert p {
+        margin: 0;
+    }
+
+    #notifikasi .close {
+        position: absolute;
+        top: 8px;
+        right: 12px;
+        color: inherit;
+        opacity: .65;
+    }
+</style>
 <!-- ./wrapper -->
-<!-- jQuery 3 -->
-<script src="<?php echo base_url();?>assets_style/assets/bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
-<script src="<?php echo base_url();?>assets_style/assets/bower_components/bootstrap/dist/js/bootstrap.js"></script>
-<script src="<?php echo base_url();?>assets_style/assets/plugins/summernote/summernote-lite.js"></script>
+<script src="<?php echo base_url();?>assets/adminlte/bower_components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="<?php echo base_url();?>assets/adminlte/plugins/summernote/summernote-lite.js"></script>
 
 <script>
     $('#summernotehal').summernote({
@@ -33,7 +58,7 @@
 	});
 </script>
 <!-- Select2 -->
-<script src="<?php echo base_url();?>assets_style/assets/bower_components/select2/dist/js/select2.full.min.js"></script>
+<script src="<?php echo base_url();?>assets/adminlte/bower_components/select2/dist/js/select2.full.min.js"></script>
 <script>
 
 $(function() {
@@ -65,30 +90,39 @@ $("#uintTextBox3").inputFilter(function(value) {
   return /^\d*$/.test(value); });
 </script>
 <script>
-    // notifikasi gagal di hide
-    //$("#notifikasi").hide();
-    var logingagal = function(){
-        $("#notifikasi").fadeOut('slow');
-    };
-    setTimeout(logingagal, 4000);
-</script> 
+    $(function () {
+        $('#notifikasi .alert').each(function () {
+            var $alert = $(this);
+            if (!$alert.find('.close').length) {
+                $alert.prepend('<button type="button" class="close" aria-label="Tutup">&times;</button>');
+            }
+            $alert.find('.close').on('click', function () {
+                $alert.stop(true, true).slideUp(180, function () { $(this).remove(); });
+            });
+        });
+
+        setTimeout(function () {
+            $('#notifikasi .alert').stop(true, true).slideUp(250, function () { $(this).remove(); });
+        }, 5000);
+    });
+</script>
 
 <!-- custom jQuery -->
-<script src="<?php echo base_url();?>assets_style/assets/dist/js/custom.js"></script>
+<script src="<?php echo base_url();?>assets/adminlte/dist/js/custom.js"></script>
 
 <!-- Logout Ajax -->
 <!-- AdminLTE App -->
-<script src="<?php echo base_url();?>assets_style/assets/dist/js/adminlte.min.js"></script>
+<script src="<?php echo base_url();?>assets/adminlte/dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
-<script src="<?php echo base_url();?>assets_style/assets/dist/js/demo.js"></script>
+<script src="<?php echo base_url();?>assets/adminlte/dist/js/demo.js"></script>
 <!-- PACE -->
-<script src="<?php echo base_url();?>assets_style/assets/bower_components/PACE/pace.min.js"></script>
+<script src="<?php echo base_url();?>assets/adminlte/bower_components/PACE/pace.min.js"></script>
 <!-- DataTables -->
-<script src="<?php echo base_url();?>assets_style/assets/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="<?php echo base_url();?>assets_style/assets/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="<?php echo base_url();?>assets/adminlte/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="<?php echo base_url();?>assets/adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <!-- bootstrap datepicker -->
-<script src="<?php echo base_url();?>assets_style/assets/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="<?php echo base_url();?>assets/adminlte/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
 <!-- bootstrap time picker -->
-<script src="<?php echo base_url();?>assets_style/assets/plugins/timepicker/bootstrap-timepicker.min.js"></script>
+<script src="<?php echo base_url();?>assets/adminlte/plugins/timepicker/bootstrap-timepicker.min.js"></script>
 </body>
 </html>

@@ -45,14 +45,8 @@
                                 <td><?= $no;?></td>
                                 <td>
                                     <center>
-                                        <?php if(!empty($isi['sampul'] !== "0")){?>
-                                        <img src="<?php echo base_url();?>assets_style/image/buku/<?php echo $isi['sampul'];?>" alt="#" 
-                                        class="img-responsive" style="height:auto;width:100px;"/>
-                                        <?php }else{?>
-                                            <!--<img src="" alt="#" class="user-image" style="border:2px solid #fff;"/>-->
-											<i class="fa fa-book fa-3x" style="color:#333;"></i> <br/><br/>
-											Tidak Ada Sampul
-                                        <?php }?>
+                                        <img src="<?= perpus_buku_sampul_url($isi['sampul']);?>" alt="Sampul <?= html_escape($isi['title']);?>"
+                                        class="img-responsive" style="width:60px;"/>
                                     </center>
                                 </td>
                                 <td><?= $isi['isbn'];?></td>
@@ -63,7 +57,7 @@
 								<td>
 									<?php
 										$id = $isi['buku_id'];
-										$dd = $this->db->query("SELECT * FROM tbl_pinjam WHERE buku_id= '$id' AND status = 'Dipinjam'");
+										$dd = $this->db->where('buku_id', $id)->where('status', 'Dipinjam')->where('deleted_at IS NULL', NULL, FALSE)->get('tbl_pinjam');
 										if($dd->num_rows() > 0 )
 										{
 											echo $dd->num_rows();

@@ -27,6 +27,7 @@
 						<div class="box-body">
 							<?php if(!empty($this->input->get('id'))){?>
 							<form method="post" action="<?= base_url('transaksi/dendaproses');?>">
+								<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
 								<div class="form-group">
 								<label for="">Harga Denda</label>
 									<input type="number" name="harga"  value="<?=$den->harga_denda;?>" class="form-control" placeholder="Contoh : 10000" >
@@ -46,6 +47,7 @@
 							<?php }else{?>
 
 							<form method="post" action="<?= base_url('transaksi/dendaproses');?>">
+								<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
 								<div class="form-group">
 								<label for="">Harga Denda</label>
 									<input type="number" name="harga" class="form-control" placeholder="Contoh : 10000" >

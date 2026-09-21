@@ -18,6 +18,7 @@
 			    <!-- /.box-header -->
 			    <div class="box-body">
                     <form action="<?php echo base_url('data/prosesbuku');?>" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
                         <div class="row">
                             <div class="col-sm-6">
 								<div class="form-group">
@@ -70,19 +71,17 @@
 								<label>Sampul <small style="color:green">(gambar) * opsional</small></label>
 									<input type="file" accept="image/*" name="gambar">
 
-									<?php if(!empty($buku->sampul !== "0")){?>
-									<br/>
-									<a href="<?= base_url('assets_style/image/buku/'.$buku->sampul);?>" target="_blank">
-										<img src="<?= base_url('assets_style/image/buku/'.$buku->sampul);?>" style="width:70px;height:70px;" class="img-responsive">
-									</a>
-									<?php }else{ echo '<br/><p style="color:red">* Tidak ada Sampul</p>';}?>
+					<br/>
+					<a href="<?= perpus_buku_sampul_url($buku->sampul);?>" target="_blank">
+					<img src="<?= perpus_buku_sampul_url($buku->sampul);?>" alt="Sampul <?= html_escape($buku->title);?>" style="width:70px;height:70px;object-fit:cover;" class="img-responsive">
+					</a>
 								</div>
                                 <div class="form-group">
 								<label>Lampiran Buku <small style="color:green">(pdf) * ganti opsional</small></label>
                                     <input type="file" accept="application/pdf" name="lampiran">
                                     <br>
 									<?php if(!empty($buku->lampiran !== "0")){?>
-									<a href="<?= base_url('assets_style/image/buku/'.$buku->lampiran);?>" class="btn btn-primary btn-md" target="_blank">
+									<a href="<?= base_url('assets/image/buku/'.$buku->lampiran);?>" class="btn btn-primary btn-md" target="_blank">
 										<i class="fa fa-download"></i> Sample Buku
 									</a>
 									<?php  }else{ echo '<br/><p style="color:red">* Tidak ada Lampiran</p>';}?>

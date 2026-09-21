@@ -145,6 +145,13 @@ abstract class CI_DB_driver {
 	public $port			= NULL;
 
 	/**
+	 * Failover connection settings
+	 *
+	 * @var	array
+	 */
+	public $failover		= array();
+
+	/**
 	 * Persistent connection flag
 	 *
 	 * @var	bool

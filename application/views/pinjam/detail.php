@@ -136,7 +136,7 @@
 											
 											<?php 
 												$pinjam_id = $pinjam->pinjam_id;
-												$denda = $this->db->query("SELECT * FROM tbl_denda WHERE pinjam_id = '$pinjam_id'");
+														$denda = $this->db->where('pinjam_id', $pinjam_id)->where('deleted_at IS NULL', NULL, FALSE)->get('tbl_denda');
 												$total_denda = $denda->row();
 
 												if($pinjam->status == 'Di Kembalikan')
@@ -144,19 +144,14 @@
 													echo $this->M_Admin->rp($total_denda->denda);
 													
 												}else{
-													$jml = $this->db->query("SELECT * FROM tbl_pinjam WHERE pinjam_id = '$pinjam_id'")->num_rows();			
-													$date1 = date('Ymd');
-													$date2 = preg_replace('/[^0-9]/','',$pinjam->tgl_balik);
-													$diff = $date1 - $date2;
-													/*	$datetime1 = new DateTime($date1);
-														$datetime2 = new DateTime($date2);
-														$difference = $datetime1->diff($datetime2); */
-													// echo $difference->days;
+					$jml = $this->db->where('pinjam_id', $pinjam_id)->where('deleted_at IS NULL', NULL, FALSE)->count_all_results('tbl_pinjam');
+									$diff = perpus_hari_terlambat($pinjam->tgl_balik);
 													if($diff > 0 )
 													{
 														echo $diff.' hari';
-														$dd = $this->M_Admin->get_tableid_edit('tbl_biaya_denda','stat','Aktif'); 
-														echo '<p style="color:red;font-size:18px;">'.$this->M_Admin->rp($jml*($dd->harga_denda*$diff)).' 
+										$dd = $this->M_Admin->get_tableid_edit('tbl_biaya_denda','stat','Aktif');
+										$total_denda = perpus_hitung_denda($diff, $jml, $dd ? $dd->harga_denda : 0);
+										echo '<p style="color:red;font-size:18px;">'.$this->M_Admin->rp($total_denda).'
 														</p><small style="color:#333;">* Untuk '.$jml.' Buku</small>';
 													}else{
 														echo '<p style="color:green;text-align:center;">
