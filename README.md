@@ -2,6 +2,12 @@
 
 Aplikasi web untuk mengelola data buku, anggota, peminjaman, pengembalian, dan denda. Aplikasi dibangun dengan CodeIgniter 3 dan AdminLTE.
 
+## Produk resmi
+
+Source code pada repository ini tersedia secara gratis untuk dipelajari dan dikembangkan.
+Versi premium resmi tersedia di [Source Code Aplikasi Sistem Informasi Perpustakaan berbasis Website Premium](https://www.codekop.com/products/source-code-aplikasi-sistem-informasi-perpustakaan-berbasis-website-5.html)
+ dengan harga promo **Rp350.000**.
+
 ## Kebutuhan sistem
 
 - PHP 8.2 atau lebih baru
@@ -102,13 +108,8 @@ User yang di-soft-delete tidak akan ditampilkan dan tidak dapat login kembali.
 - Memperketat upload file dengan whitelist MIME/ekstensi, nama file acak, pembatasan ukuran, dan pencegahan eksekusi script di folder upload.
 - Merapikan perhitungan tanggal jatuh tempo, keterlambatan, dan denda pada proses peminjaman serta pengembalian.
 
-## Produk resmi
 
-Source code pada repository ini tersedia secara gratis untuk dipelajari dan dikembangkan.
-Versi premium resmi tersedia di [Codekop](https://www.codekop.com/products/source-code-aplikasi-sistem-informasi-perpustakaan-berbasis-website-5.html)
- dengan harga promo **Rp350.000**.
-
-Fitur utama yang tersedia:
+## Fitur utama yang tersedia:
 
 - Login dengan hak akses Petugas dan Anggota.
 - Manajemen user/anggota, buku, kategori, dan rak.
